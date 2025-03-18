@@ -35,6 +35,18 @@ namespace HealthApp.Razor.Data
                     await userManager.CreateAsync(user, password);
                     await userManager.AddToRoleAsync(user, HealthAppRoles.Admin);
                 }
+                Console.WriteLine("Creating fake users");
+                string patientPassword = "Letmein01*";
+                for (int i = 1; i <= 10; i++)
+                {
+
+                    string fakeUserName = $"{Faker.Name.First()}{i}";
+                    Console.WriteLine($"Creating user {fakeUserName}");
+                    var user = new IdentityUser { UserName = fakeUserName, Email = $"{fakeUserName}@healthapp.com", EmailConfirmed = true };
+                    await userManager.CreateAsync(user, patientPassword);
+                    await userManager.AddToRoleAsync(user, HealthAppRoles.Patient);
+                }
+
             }
         }
     }
