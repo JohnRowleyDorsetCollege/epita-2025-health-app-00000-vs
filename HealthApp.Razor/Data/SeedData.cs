@@ -37,14 +37,38 @@ namespace HealthApp.Razor.Data
                 }
                 Console.WriteLine("Creating fake users");
                 string patientPassword = "Letmein01*";
+                string doctorPassword = "Letmein01*";
                 for (int i = 1; i <= 10; i++)
                 {
 
-                    string fakeUserName = $"{Faker.Name.First()}{i}";
-                    Console.WriteLine($"Creating user {fakeUserName}");
-                    var user = new IdentityUser { UserName = fakeUserName, Email = $"{fakeUserName}@healthapp.com", EmailConfirmed = true };
-                    await userManager.CreateAsync(user, patientPassword);
-                    await userManager.AddToRoleAsync(user, HealthAppRoles.Patient);
+                    string fakeDoctorName = $"Dr-{Faker.Name.First()}{i}";
+                    Console.WriteLine($"Creating user {fakeDoctorName}");
+                    var doctor = new IdentityUser { UserName = fakeDoctorName, Email = $"{fakeDoctorName}@healthapp.com", EmailConfirmed = true };
+
+                    if (await userManager.FindByEmailAsync(fakeDoctorName) == null)
+                    {
+                        await userManager.CreateAsync(doctor, patientPassword);
+                        await userManager.AddToRoleAsync(doctor, HealthAppRoles.Doctor);
+
+                        Console.WriteLine($"{doctor.Id} is a doctor");  
+
+                    }
+                    for (int j = 1; j <= 10; j++)
+                    {
+
+                        string fakeUserName = $"P-{Faker.Name.First()}{j}";
+                        Console.WriteLine($"Creating user {fakeUserName}");
+                        var patient = new IdentityUser { UserName = fakeUserName, Email = $"{fakeUserName}@healthapp.com", EmailConfirmed = true };
+
+                        if (await userManager.FindByEmailAsync(fakeUserName) == null)
+                        {
+                            await userManager.CreateAsync(patient, patientPassword);
+                            await userManager.AddToRoleAsync(patient, HealthAppRoles.Patient);
+                        }
+                       
+                    }
+
+
                 }
 
             }
